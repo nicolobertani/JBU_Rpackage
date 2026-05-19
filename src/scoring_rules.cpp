@@ -13,6 +13,7 @@ using namespace Rcpp;
 
 
 // CRPS
+//' @export
 // [[Rcpp::export]]
 arma::mat CRPS_score (arma::mat y, arma::cube y_hat) {
   // checks
@@ -44,6 +45,7 @@ arma::mat CRPS_score (arma::mat y, arma::cube y_hat) {
 }
 
 // Energy score
+//' @export
 // [[Rcpp::export]]
 arma::vec energy_score (arma::mat y, arma::cube y_hat, double beta = 1) {
   // checks
@@ -80,6 +82,7 @@ arma::vec energy_score (arma::mat y, arma::cube y_hat, double beta = 1) {
 
 
 // Variogram
+//' @export
 // [[Rcpp::export]]
 arma::vec variogram_score (arma::mat y, arma::cube y_hat, double p = .5) {
   // checks
