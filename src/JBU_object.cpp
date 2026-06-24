@@ -425,6 +425,21 @@ END OF JBU MODEL CLASS
 START R FUNCTIONS
 */
 
+//' Normalize a predictor block
+//'
+//' Centers and scales each column of `X_block`. Columns with non-zero
+//' standard deviation are divided by their standard deviation. Columns with
+//' zero standard deviation are centered only.
+//'
+//' @param X_block A numeric matrix of predictors.
+//'
+//' @return A numeric matrix with the same dimensions as `X_block`, where each
+//' column has been centered and, when possible, scaled.
+//'
+//' @examples
+//' X_block <- matrix(1:12, nrow = 4)
+//' JBU_norm_X_block(X_block)
+//'
 //' @export
 // [[Rcpp::export]]
 arma::mat JBU_norm_X_block(arma::mat X_block) {
@@ -433,6 +448,29 @@ arma::mat JBU_norm_X_block(arma::mat X_block) {
   return mod.get_X_block();
 }
 
+//' Select predictors for each series
+//'
+//' Applies the JBU filtering step to select the `K` most relevant predictors
+//' from `X_block` for each series in `y_mx`.
+//'
+//' @param X_block A numeric matrix of candidate predictors.
+//' @param y_mx A numeric matrix of observed series. Rows are time points and
+//' columns are series.
+//' @param K An integer giving the number of predictors to select for each series.
+//'
+//' @return An integer matrix with `K` rows and one column for each series in
+//' `y_mx`. Each column contains the selected predictor indices.
+//'
+//' @examples
+//' set.seed(1)
+//' X_block <- matrix(rnorm(40), nrow = 10, ncol = 4)
+//' y_mx <- cbind(
+//'   2 * X_block[, 1] + rnorm(10, sd = 0.1),
+//'   -1 * X_block[, 3] + rnorm(10, sd = 0.1)
+//' )
+//'
+//' JBU_filter(X_block, y_mx, K = 2)
+//'
 //' @export
 // [[Rcpp::export]]
 arma::umat JBU_filter (const arma::mat &X_block, const arma::mat &y_mx, const int &K) {
@@ -443,6 +481,33 @@ arma::umat JBU_filter (const arma::mat &X_block, const arma::mat &y_mx, const in
   return mod.get_delta_mx() + 1;
 }
 
+//' Build the filtered predictor matrix
+//'
+//' Applies the JBU filter and constructs the block-diagonal predictor matrix
+//' used by the sampler.
+//'
+//' @param X_block A numeric matrix of candidate predictors.
+//' @param y_mx A numeric matrix of observed series. Rows are time points and
+//' columns are series.
+//' @param K An integer giving the number of predictors to select for each series.
+//'
+//' @return A numeric matrix containing the filtered block-diagonal predictor
+//' structure. If `X_block` has `T` rows, `y_mx` has `M` columns, and `K`
+//' predictors are selected per series, the result has `T * M` rows and
+//' `K * M` columns.
+//'
+//' @examples
+//' set.seed(1)
+//' X_block <- matrix(rnorm(40), nrow = 10, ncol = 4)
+//' y_mx <- cbind(
+//'   2 * X_block[, 1] + rnorm(10, sd = 0.1),
+//'   -1 * X_block[, 3] + rnorm(10, sd = 0.1)
+//' )
+//'
+//' X_alpha <- JBU_X_alpha(X_block, y_mx, K = 2)
+//' dim(X_alpha)
+//' X_alpha
+//'
 //' @export
 // [[Rcpp::export]]
 arma::mat JBU_X_alpha(const arma::mat &X_block, const arma::mat &y_mx, const int &K) {

@@ -12,7 +12,26 @@ using namespace Rcpp;
 // y_hat is a tensor of N (number samples) x M x H
 
 
-// CRPS
+//' Compute the continuous ranked probability score
+//'
+//' Computes the continuous ranked probability score (CRPS) for each forecast
+//' horizon and series, comparing observed values with simulated forecast samples.
+//'
+//' @param y A numeric matrix of observed values. Rows are forecast horizons and
+//' columns are series.
+//' @param y_hat A numeric array of forecast samples with dimensions
+//' samples x series x horizons.
+//'
+//' @return A numeric matrix with the same dimensions as `y`, containing one CRPS
+//' value for each horizon and series.
+//'
+//' @examples
+//' set.seed(1)
+//' y <- matrix(c(10, 12, 20, 22), nrow = 2, ncol = 2)
+//' y_hat <- array(rnorm(5 * 2 * 2, mean = 15, sd = 2), dim = c(5, 2, 2))
+//'
+//' CRPS_score(y, y_hat)
+//'
 //' @export
 // [[Rcpp::export]]
 arma::mat CRPS_score (arma::mat y, arma::cube y_hat) {
@@ -44,7 +63,26 @@ arma::mat CRPS_score (arma::mat y, arma::cube y_hat) {
   return out;
 }
 
-// Energy score
+//' Compute the energy score
+//'
+//' Computes the energy score for multivariate probabilistic forecasts at each
+//' forecast horizon.
+//'
+//' @param y A numeric matrix of observed values. Rows are forecast horizons and
+//' columns are series.
+//' @param y_hat A numeric array of forecast samples with dimensions
+//' samples x series x horizons.
+//' @param beta A numeric power parameter. The default is `1`.
+//'
+//' @return A numeric vector with one energy score for each forecast horizon.
+//'
+//' @examples
+//' set.seed(1)
+//' y <- matrix(c(10, 12, 20, 22), nrow = 2, ncol = 2)
+//' y_hat <- array(rnorm(5 * 2 * 2, mean = 15, sd = 2), dim = c(5, 2, 2))
+//'
+//' energy_score(y, y_hat)
+//'
 //' @export
 // [[Rcpp::export]]
 arma::vec energy_score (arma::mat y, arma::cube y_hat, double beta = 1) {
@@ -81,7 +119,26 @@ arma::vec energy_score (arma::mat y, arma::cube y_hat, double beta = 1) {
 
 
 
-// Variogram
+//' Compute the variogram score
+//'
+//' Computes the variogram score for multivariate probabilistic forecasts at
+//' each forecast horizon.
+//'
+//' @param y A numeric matrix of observed values. Rows are forecast horizons and
+//' columns are series.
+//' @param y_hat A numeric array of forecast samples with dimensions
+//' samples x series x horizons.
+//' @param p A numeric power parameter. The default is `0.5`.
+//'
+//' @return A numeric vector with one variogram score for each forecast horizon.
+//'
+//' @examples
+//' set.seed(1)
+//' y <- matrix(c(10, 12, 20, 22), nrow = 2, ncol = 2)
+//' y_hat <- array(rnorm(5 * 2 * 2, mean = 15, sd = 2), dim = c(5, 2, 2))
+//'
+//' variogram_score(y, y_hat)
+//'
 //' @export
 // [[Rcpp::export]]
 arma::vec variogram_score (arma::mat y, arma::cube y_hat, double p = .5) {
